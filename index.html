@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeDrop – Fast Cross-Platform Local File Sharing</title>
+    
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Transfer files instantly between Windows, macOS, and Android over the same Wi-Fi network or hotspot. BeeDrop offers secure, high-speed local file sharing with no internet or cloud required.">
+    <meta name="keywords"
+        content="BeeDrop, Local File Sharing, Cross Platform File Transfer, Windows to Mac File Transfer, Mac to Windows File Sharing, Android File Sharing, Wi-Fi File Transfer, Hotspot File Sharing, AirDrop Alternative, Nearby Share Alternative">
+    <meta name="author" content="Madhusudan Sarkar (Sarkar Labs / MS Technologies)">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beedrop.app/">
+    <meta property="og:title" content="BeeDrop – Fast Cross-Platform Local File Sharing">
+    <meta property="og:description"
+        content="Share files at up to 120+ MB/s over your local network. Direct peer-to-peer, 100% private, and completely offline.">
+    <meta property="og:image" content="https://beedrop.app/assets/og-image.png">
+    <meta property="og:site_name" content="BeeDrop">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://beedrop.app/">
+    <meta name="twitter:title" content="BeeDrop – Fast Cross-Platform Local File Sharing">
+    <meta name="twitter:description"
+        content="Share files at up to 120+ MB/s over your local network. Direct peer-to-peer, 100% private, and completely offline.">
+    <meta name="twitter:image" content="https://beedrop.app/assets/og-image.png">
+
+    <!-- Preload Critical Above-The-Fold Image -->
+    <link rel="preload" as="image" href="assets/beedrop_mac_app.webp" type="image/webp" fetchpriority="high">
+
+    <!-- External Modular Stylesheet (Self-hosted Inter font included) -->
+    <link rel="stylesheet" href="css/style.css?v=3">
+
+    <!-- Third-Party Libraries (Deferred to eliminate render-blocking) -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Dynamic Atmosphere Backgrounds -->
+    <canvas id="webgl-canvas"></canvas>
+    <div class="aurora"></div>
+    <div class="mouse-spotlight" id="mouse-spotlight"></div>
+
+    <!-- Image Lightbox Preview Modal -->
+    <div class="lightbox-modal" id="lightbox-modal">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close Preview">
+            <i data-lucide="x"></i>
+        </button>
+        <div class="lightbox-container glass-panel">
+            <img src="assets/beedrop_mac_app.webp" id="lightbox-img" alt="BeeDrop UI Preview" width="1200" height="1200">
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar-nav">
+        <div class="sidebar-header">
+            <a href="#" class="logo">
+                <img src="assets/logo.webp" alt="BeeDrop Logo" class="brand-logo-img" width="34" height="34">
+                <span class="nav-text">BeeDrop</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <nav class="nav-links">
+            <a href="#showcase" class="nav-link"><i data-lucide="image"></i> <span class="nav-text">App Preview</span></a>
+            <a href="#why-beedrop" class="nav-link"><i data-lucide="help-circle"></i> <span class="nav-text">Why BeeDrop</span></a>
+            <a href="#speed" class="nav-link"><i data-lucide="zap"></i> <span class="nav-text">Speed Matrix</span></a>
+            <a href="#requirements" class="nav-link"><i data-lucide="cpu"></i> <span class="nav-text">Requirements</span></a>
+            <a href="#how-it-works" class="nav-link"><i data-lucide="settings"></i> <span class="nav-text">How It Works</span></a>
+            <a href="#creator" class="nav-link"><i data-lucide="user"></i> <span class="nav-text">Developer</span></a>
+            <a href="#download" class="nav-link"><i data-lucide="download"></i> <span class="nav-text">Download</span></a>
+            <a href="#faq" class="nav-link"><i data-lucide="message-square"></i> <span class="nav-text">FAQ</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#download" class="btn btn-primary w-full"><i data-lucide="download-cloud"></i> <span class="nav-text">Get BeeDrop</span></a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- SECTION 1: Hero -->
+            <section id="hero">
+                <div class="hero-grid">
+                    <div class="hero-content hero-animate">
+                        <div class="badge">
+                            <span class="badge-dot"></span> BeeDrop
+                        </div>
+                        <h1 class="hero-title">Fast. Secure.<br><span class="text-gradient">Cross-Platform</span><br>Local File Sharing.</h1>
+                        <p class="subtitle">Share files instantly between Windows, macOS, and Android over the same Wi-Fi network or mobile hotspot. No internet. No cables. No cloud uploads.</p>
+                        <div class="hero-btns">
+                            <a href="#download" class="btn btn-primary"><i data-lucide="monitor"></i> Download for Windows</a>
+                            <a href="#download" class="btn btn-glass"><i data-lucide="laptop"></i> Download for macOS</a>
+                            <a href="#why-beedrop" class="btn btn-glass" style="border: 1px solid rgba(251, 191, 36, 0.3); color: var(--primary);">
+                                <i data-lucide="arrow-down-circle"></i> Learn More
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual-wrapper hero-animate">
+                        <!-- SVG Golden Animated Connecting Lines -->
+                        <svg class="golden-lines-svg" viewBox="0 0 500 500" aria-hidden="true">
+                            <path class="golden-path" d="M 50 100 Q 250 50 450 150 T 150 420" fill="none" stroke-width="2" />
+                            <path class="golden-path" d="M 450 150 Q 200 250 80 400" fill="none" stroke-width="2" />
+                        </svg>
+
+                        <!-- Moving Animated File Data Node -->
+                        <div class="moving-file-icon" aria-hidden="true">
+                            <i data-lucide="file-text"></i>
+                        </div>
+
+                        <!-- Main Featured Interactive 3D Card -->
+                        <div class="glass-panel hero-featured-card tilt-card glow-on-hover">
+                            <div class="hero-img-box">
+                                <img src="assets/beedrop_mac_app.webp" alt="BeeDrop macOS App Interface" width="1200" height="1200" fetchpriority="high">
+                            </div>
+                        </div>
+
+                        <!-- Floating Badges: MacBook, Android Tablet, Windows Laptop, Android Phone -->
+                        <div class="floating-device dev-mac-badge">
+                            <i data-lucide="laptop"></i>
+                            <div>
+                                <div class="floating-device-title">MacBook Pro</div>
+                                <div class="floating-device-sub">Connected via Wi-Fi</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-device dev-iphone-badge">
+                            <i data-lucide="tablet"></i>
+                            <div>
+                                <div class="floating-device-title">Android Tablet</div>
+                                <div class="floating-device-sub">Connected via Wi-Fi</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-device dev-win-badge">
+                            <i data-lucide="monitor"></i>
+                            <div>
+                                <div class="floating-device-title">Windows Laptop</div>
+                                <div class="floating-device-sub">Connected via LAN</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-device dev-phone-badge">
+                            <i data-lucide="smartphone"></i>
+                            <div>
+                                <div class="floating-device-title">Android Phone</div>
+                                <div class="floating-device-sub">QR Code Paired</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Screenshots / App Showcase -->
+            <section id="showcase">
+                <div class="section-header gsap-reveal">
+                    <h2>Designed for <span class="text-gradient">Seamless Experience</span></h2>
+                    <p class="subtitle" style="margin: 0 auto;">Click on any preview card to inspect the sleek dark glassmorphism interface across desktop and mobile.</p>
+                </div>
+
+                <div class="showcase-grid">
+                    <!-- Card 1: macOS UI -->
+                    <div class="glass-panel hover-img-card glow-on-hover gsap-reveal" tabindex="0" role="button" aria-label="Inspect macOS Live File Transfer Ring">
+                        <div class="hover-img-wrapper">
+                            <img src="assets/beedrop_live_transfer.webp" alt="macOS BeeDrop Transfer UI" width="2400" height="1792" loading="lazy" decoding="async">
+                            <div class="hover-img-overlay"></div>
+                        </div>
+                        <div class="hover-img-content">
+                            <div class="hover-img-tag">macOS Native UI</div>
+                            <h3 class="hover-img-title">Live File Transfer Ring</h3>
+                            <p class="hover-img-desc">Track real-time transfer speeds, remaining time, and nearby discovered devices on macOS.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Windows UI -->
+                    <div class="glass-panel hover-img-card glow-on-hover gsap-reveal" tabindex="0" role="button" aria-label="Inspect Windows 11 Radar UI">
+                        <div class="hover-img-wrapper">
+                            <img src="assets/beedrop_device_discovery.webp" alt="Windows 11 BeeDrop Radar UI" width="2111" height="1678" loading="lazy" decoding="async">
+                            <div class="hover-img-overlay"></div>
+                        </div>
+                        <div class="hover-img-content">
+                            <div class="hover-img-tag">Windows 11 Acrylic</div>
+                            <h3 class="hover-img-title">Radar Discovery &amp; Drag-Drop</h3>
+                            <p class="hover-img-desc">Scan your local network in real-time with visual radar and drop folders directly to send.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Mobile UI -->
+                    <div class="glass-panel hover-img-card glow-on-hover gsap-reveal" tabindex="0" role="button" aria-label="Inspect Instant QR Code Pairing">
+                        <div class="hover-img-wrapper">
+                            <img src="assets/beedrop_qr_pairing.webp" alt="Mobile QR Scan UI" width="2400" height="1792" loading="lazy" decoding="async">
+                            <div class="hover-img-overlay"></div>
+                        </div>
+                        <div class="hover-img-content">
+                            <div class="hover-img-tag">Mobile Companion</div>
+                            <h3 class="hover-img-title">Instant QR Code Pairing</h3>
+                            <p class="hover-img-desc">Point your phone's camera at the computer screen to establish an encrypted local link instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Why BeeDrop? (Features Grid) -->
+            <section id="why-beedrop">
+                <div class="section-header gsap-reveal">
+                    <h2>Why Choose <span class="text-gradient">BeeDrop</span>?</h2>
+                    <p class="subtitle" style="margin: 0 auto;">Built for maximum performance, ultimate privacy, and seamless cross-platform local file transfers.</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Card 1: Fast & Offline -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="zap"></i>
+                        </div>
+                        <h3>Ultra-Fast &amp; Offline</h3>
+                        <p>High-speed local file transfers over Wi-Fi, LAN, or mobile hotspot without internet data or bandwidth caps.</p>
+                    </div>
+
+                    <!-- Card 2: 100% Private -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <h3>100% Private &amp; Secure</h3>
+                        <p>Direct peer-to-peer sharing. Your files stay strictly on your local network without any cloud server uploads.</p>
+                    </div>
+
+                    <!-- Card 3: Cross Platform & Trusted -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="smartphone-nfc"></i>
+                        </div>
+                        <h3>Cross-Platform &amp; Trusted</h3>
+                        <p>Works seamlessly between Windows, macOS, and Android. Save trusted devices for instant auto-discovery.</p>
+                    </div>
+
+                    <!-- Card 4: Folders & Batch Sharing -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="folder-tree"></i>
+                        </div>
+                        <h3>Folders &amp; Batch Sharing</h3>
+                        <p>Transfer complete directory trees and hundreds of 4K videos or documents in one click without losing structure.</p>
+                    </div>
+
+                    <!-- Card 5: Instant QR Pairing -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="qr-code"></i>
+                        </div>
+                        <h3>Instant QR Pairing</h3>
+                        <p>Point your mobile camera at your computer screen to scan an encrypted QR code and pair instantly.</p>
+                    </div>
+
+                    <!-- Card 6: Smart Auto-Resume -->
+                    <div class="glass-panel feature-card glow-on-hover gsap-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <h3>Smart Auto-Resume</h3>
+                        <p>Intelligent connection recovery automatically resumes interrupted file transfers right where they left off.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Transfer Speed (Performance Guide Table) -->
+            <section id="speed">
+                <div class="section-header gsap-reveal">
+                    <h2><span class="text-gradient">Transfer Speed</span> Performance Guide</h2>
+                    <p class="subtitle" style="margin: 0 auto;">Benchmark speeds achieved directly across different local connection hardware.</p>
+                </div>
+
+                <!-- Performance Guide Speed Table -->
+                <div class="speed-table-container gsap-reveal" style="margin-bottom: 24px;">
+                    <table class="speed-table">
+                        <thead>
+                            <tr>
+                                <th>Connection</th>
+                                <th>Typical Speed</th>
+                                <th>Maximum Speed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="zap"></i> Gigabit LAN</span></td>
+                                <td><span class="speed-badge-typical">80–100 MB/s</span></td>
+                                <td><span class="speed-badge-best">120+ MB/s</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="wifi"></i> Wi-Fi 6 (5 GHz)</span></td>
+                                <td><span class="speed-badge-typical">50–90 MB/s</span></td>
+                                <td><span class="speed-badge-best">120 MB/s</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="radio"></i> Wi-Fi 5 (5 GHz)</span></td>
+                                <td><span class="speed-badge-typical">25–60 MB/s</span></td>
+                                <td><span class="speed-badge-best">80–90 MB/s</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="wifi"></i> Wi-Fi 2.4 GHz</span></td>
+                                <td><span class="speed-badge-typical">5–20 MB/s</span></td>
+                                <td><span class="speed-badge-best">30 MB/s</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="smartphone"></i> 5 GHz Hotspot</span></td>
+                                <td><span class="speed-badge-typical">20–50 MB/s</span></td>
+                                <td><span class="speed-badge-best">70 MB/s</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="table-icon-inline"><i data-lucide="smartphone"></i> 2.4 GHz Hotspot</span></td>
+                                <td><span class="speed-badge-typical">5–15 MB/s</span></td>
+                                <td><span class="speed-badge-best">25 MB/s</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.88rem;" class="gsap-reveal">
+                    * Actual speeds depend on your router, signal quality, storage speed, and hardware.
+                </p>
+            </section>
+
+            <!-- SECTION 5: Requirements & Installation -->
+            <section id="requirements">
+                <div class="section-header gsap-reveal">
+                    <h2>Requirements &amp; <span class="text-gradient">Installation</span></h2>
+                    <p class="subtitle" style="margin: 0 auto;">Everything you need to know about system compatibility, launch behavior, and installation.</p>
+                </div>
+
+                <!-- Launch Compatibility Matrix -->
+                <div class="matrix-container glass-panel gsap-reveal" style="margin-bottom: 40px; padding: 24px;">
+                    <h3 style="margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 10px; font-size: 1.15rem;">
+                        <i data-lucide="sliders"></i> Platform Launch &amp; Network Matrix
+                    </h3>
+                    <div class="speed-table-container">
+                        <table class="speed-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Windows</th>
+                                    <th>macOS (Intel)</th>
+                                    <th>macOS (Apple Silicon M1–M5)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Internet Required</strong></td>
+                                    <td>Only for download</td>
+                                    <td>Only for download</td>
+                                    <td>Only for download &amp; Rosetta (1st launch)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Firewall Permission</strong></td>
+                                    <td>Allow Firewall when prompted</td>
+                                    <td>Not Required</td>
+                                    <td>Not Required</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Runs Natively</strong></td>
+                                    <td><span class="badge-tag green"><i data-lucide="check-circle-2"></i> Yes</span></td>
+                                    <td><span class="badge-tag green"><i data-lucide="check-circle-2"></i> Yes</span></td>
+                                    <td><span class="badge-tag amber"><i data-lucide="info"></i> Apple Rosetta 2</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>First Launch</strong></td>
+                                    <td>Starts normally</td>
+                                    <td>Starts normally</td>
+                                    <td>Installs Rosetta 2 (~1 min), then starts</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Future Launches</strong></td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal (Rosetta cached)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Platform Installation Guides -->
+                <div class="install-guides-grid gsap-reveal">
+                    <!-- macOS (Intel) Guide -->
+                    <div class="glass-panel req-card glow-on-hover">
+                        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem;">
+                            <i data-lucide="laptop" style="color: var(--primary);"></i> macOS (Intel) Installation Guide
+                        </h3>
+                        <ol class="install-steps-list">
+                            <li>
+                                <span class="step-badge">1</span>
+                                <div><strong>Download:</strong> Get <code>BeeDrop-macOS.dmg</code>.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">2</span>
+                                <div><strong>Mount DMG:</strong> Double-click the DMG file to open the installer window.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">3</span>
+                                <div><strong>Install:</strong> Drag <code>BeeDrop.app</code> into the Applications folder.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">4</span>
+                                <div><strong>Launch &amp; Approve:</strong> Open from Applications. If security prompt appears, approve via <em>System Settings → Privacy &amp; Security</em>.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">5</span>
+                                <div><strong>Start Sharing:</strong> BeeDrop is ready to discover nearby devices and transfer files!</div>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Windows Installation Guide -->
+                    <div class="glass-panel req-card glow-on-hover">
+                        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem;">
+                            <i data-lucide="monitor" style="color: var(--primary);"></i> Windows Installation Guide
+                        </h3>
+                        <ol class="install-steps-list">
+                            <li>
+                                <span class="step-badge">1</span>
+                                <div><strong>Download Installer:</strong> Get <code>BeeDrop-Setup.exe</code> for Windows (10 / 11).</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">2</span>
+                                <div><strong>Run Setup:</strong> Double-click <code>BeeDrop-Setup.exe</code> to launch the installer wizard.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">3</span>
+                                <div><strong>SmartScreen Approval:</strong> If Windows Defender SmartScreen appears, click <em>More info → Run anyway</em>.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">4</span>
+                                <div><strong>Complete Setup:</strong> Follow the setup wizard prompts and launch BeeDrop from Start Menu.</div>
+                            </li>
+                            <li>
+                                <span class="step-badge">5</span>
+                                <div><strong>Start Sharing:</strong> Allow Firewall access when prompted. BeeDrop is ready to discover nearby devices!</div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Combined macOS (Apple Silicon M1–M5) Guide & Rosetta 2 FAQ -->
+                <div class="rosetta-faq-box glass-panel glow-on-hover gsap-reveal" style="margin-top: 24px; padding: 22px 24px;">
+                    <h3 style="margin-bottom: 18px; color: var(--primary); display: flex; align-items: center; gap: 10px; font-size: 1.2rem;">
+                        <i data-lucide="cpu"></i> macOS (Apple Silicon M1–M5) Guide &amp; Rosetta 2 Quick FAQ
+                    </h3>
+                    <div class="apple-silicon-combined-grid">
+                        <!-- Left Column: Apple Silicon Installation Steps -->
+                        <div class="apple-silicon-steps-wrap">
+                            <h4 style="color: var(--text-main); margin-bottom: 12px; font-size: 1.02rem; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="download-cloud" style="width: 18px; height: 18px; color: var(--primary);"></i> Installation Guide (M1–M5 Macs)
+                            </h4>
+                            <ol class="install-steps-list">
+                                <li>
+                                    <span class="step-badge">1</span>
+                                    <div><strong>Download &amp; Install:</strong> Download <code>BeeDrop-macOS.dmg</code>, open it, and drag <code>BeeDrop.app</code> to Applications.</div>
+                                </li>
+                                <li>
+                                    <span class="step-badge">2</span>
+                                    <div><strong>First Launch Prompt:</strong> Open BeeDrop. When prompted <em>"To open BeeDrop, you need to install Rosetta."</em>, click <strong>Install</strong>.</div>
+                                </li>
+                                <li>
+                                    <span class="step-badge">3</span>
+                                    <div><strong>Rosetta 2 Setup:</strong> Wait ~1 minute while official Apple Rosetta 2 completes installation automatically (1-time only).</div>
+                                </li>
+                                <li>
+                                    <span class="step-badge">4</span>
+                                    <div><strong>Launch &amp; Share:</strong> Open BeeDrop again from Applications. It starts normally and is ready for offline transfers.</div>
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Right Column: Rosetta 2 Quick FAQ -->
+                        <div class="apple-silicon-faq-wrap">
+                            <h4 style="color: var(--accent-cyan); margin-bottom: 12px; font-size: 1.02rem; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="help-circle" style="width: 18px; height: 18px;"></i> Rosetta 2 Quick FAQ
+                            </h4>
+                            <div class="rosetta-faq-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                <div class="rosetta-faq-item">
+                                    <strong>What is Rosetta 2?</strong>
+                                    <p>Apple's translation layer enabling high performance execution on Apple Silicon Macs.</p>
+                                </div>
+                                <div class="rosetta-faq-item">
+                                    <strong>Is Rosetta 2 safe?</strong>
+                                    <p><span class="badge-tag green"><i data-lucide="check-circle-2"></i> Yes</span> Apple signed &amp; verified.</p>
+                                </div>
+                                <div class="rosetta-faq-item">
+                                    <strong>Which Macs need it?</strong>
+                                    <p>Apple Silicon Macs (M1–M5). Intel Macs do not require it.</p>
+                                </div>
+                                <div class="rosetta-faq-item">
+                                    <strong>Setup Time &amp; Frequency</strong>
+                                    <p>Takes <strong>&lt; 1 min</strong> only once. Subsequent launches run instantly.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: How It Works -->
+            <section id="how-it-works">
+                <div class="section-header gsap-reveal">
+                    <h2>How It <span class="text-gradient">Works</span></h2>
+                    <p class="subtitle" style="margin: 0 auto;">Simple 6-step local file sharing process with zero configuration.</p>
+                </div>
+
+                <div class="steps-flow-grid">
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 01</div>
+                        <h4>Get BeeDrop App</h4>
+                        <p>Download the official installer for Windows, macOS, or launch the instant Android PWA.</p>
+                    </div>
+
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 02</div>
+                        <h4>Connect Local Network</h4>
+                        <p>Join all target devices to the same home Wi-Fi network or active mobile hotspot.</p>
+                    </div>
+
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 03</div>
+                        <h4>Radar Auto Discovery</h4>
+                        <p>Launch BeeDrop to automatically discover nearby active nodes on your live radar screen.</p>
+                    </div>
+
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 04</div>
+                        <h4>Select Content &amp; Folders</h4>
+                        <p>Drag and drop individual files, high-res photos, 4K videos, or complete directory trees in one batch.</p>
+                    </div>
+
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 05</div>
+                        <h4>Authorize &amp; Transfer</h4>
+                        <p>Accept the incoming prompt on the receiving device to initiate instant encrypted P2P sharing.</p>
+                    </div>
+
+                    <div class="glass-panel step-flow-card gsap-reveal">
+                        <div class="step-flow-num">Step 06</div>
+                        <h4>Auto-Save &amp; Resume</h4>
+                        <p>Files are safely saved directly to downloads with integrity checks and session auto-resume.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Download Section -->
+            <section id="download">
+                <div class="section-header gsap-reveal">
+                    <h2>Download <span class="text-gradient">BeeDrop</span></h2>
+                    <p class="subtitle" style="margin: 0 auto;">Get the official installers for your platform. Free and direct local file transfer.</p>
+                </div>
+
+                <div class="download-grid">
+                    <!-- Windows Card -->
+                    <div class="glass-panel dl-card glow-on-hover gsap-reveal">
+                        <div class="dl-icon-wrapper">
+                            <i data-lucide="monitor"></i>
+                        </div>
+                        <h3>Windows</h3>
+                        <p class="specs">Windows 10 / 11 • Installer (.exe)</p>
+                        <!-- TODO: replace with direct GitHub Releases / CDN link -->
+                        <a href="https://drive.google.com/file/d/17CkLsmWiqUBpPQNJanfFDOtZ7-VTYi3H/view?usp=drive_link"
+                            target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                            style="width: 100%; text-decoration: none;">
+                            <i data-lucide="download"></i> Download for Windows
+                        </a>
+                    </div>
+
+                    <!-- macOS Card -->
+                    <div class="glass-panel dl-card glow-on-hover gsap-reveal">
+                        <div class="dl-icon-wrapper">
+                            <i data-lucide="laptop"></i>
+                        </div>
+                        <h3>macOS</h3>
+                        <p class="specs">Universal Installer (.dmg)<br><span style="font-size: 0.82rem; opacity: 0.85;">Choose your Mac architecture:</span></p>
+                        <div class="mac-dl-btns" style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
+                            <!-- TODO: replace with direct GitHub Releases / CDN link -->
+                            <a href="https://drive.google.com/file/d/1AgQ9Uc-GsitpVEkBYQ6sH36I3_9fO16A/view?usp=drive_link"
+                                target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                                style="width: 100%; font-size: 0.88rem; justify-content: center; text-decoration: none;">
+                                <i data-lucide="cpu"></i> Download for Apple Silicon (M1–M5)
+                            </a>
+                            <!-- TODO: replace with direct GitHub Releases / CDN link -->
+                            <a href="https://drive.google.com/file/d/1wgozgHAbWH0fsg6aArBM3HPzN-d_HDIm/view?usp=drive_link"
+                                target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                                style="width: 100%; font-size: 0.88rem; justify-content: center; text-decoration: none;">
+                                <i data-lucide="laptop"></i> Download for Intel (i3–i9)
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Android / Mobile Card -->
+                    <div class="glass-panel dl-card glow-on-hover gsap-reveal">
+                        <div class="dl-icon-wrapper">
+                            <i data-lucide="smartphone"></i>
+                        </div>
+                        <h3>Android &amp; Mobile</h3>
+                        <p class="specs">Progressive Web App (PWA)<br><span style="font-size: 0.82rem; opacity: 0.85;">iOS App Coming Soon</span></p>
+                        <a href="#how-it-works" class="btn btn-primary" style="width: 100%; text-decoration: none; justify-content: center;">
+                            <i data-lucide="external-link"></i> Launch Web App
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: Meet the Creator & Brand -->
+            <section id="creator">
+                <div class="glass-panel creator-box glow-on-hover gsap-reveal">
+                    <div class="creator-avatar-wrap">
+                        <div class="creator-avatar-inner">
+                            <i data-lucide="code-2"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="creator-brand">Sarkar Labs / MS Technologies</div>
+                        <h3 class="creator-name">Madhusudan Sarkar</h3>
+                        <div class="creator-role">Full-Stack Developer &amp; Creator of BeeDrop</div>
+                        <p class="creator-bio">
+                            "I built BeeDrop to make local file sharing between Windows, macOS, and Android simple, fast, and secure—without relying on cloud services, data caps, or internet connectivity."
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 9: Frequently Asked Questions (FAQ) -->
+            <section id="faq">
+                <div class="section-header gsap-reveal">
+                    <h2>Frequently Asked <span class="text-gradient">Questions</span></h2>
+                </div>
+
+                <div class="faq-container gsap-reveal">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Does BeeDrop require the internet?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            No. BeeDrop transfers files directly over your local network (Wi-Fi or Mobile Hotspot). No active internet data or broadband subscription is consumed.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Do all devices need to be on the same network?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. Connect every device to the same Wi-Fi network or personal mobile hotspot so BeeDrop's automatic discovery protocol can find nearby devices.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Is there a file size limit?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            No practical limit. Large 4K movies, disk images, and massive folders are fully supported, subject only to available disk storage on the receiving device.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Is BeeDrop secure?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. Files remain strictly on your local network and are transferred direct peer-to-peer. Nothing is ever uploaded or buffered on external cloud servers.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Does BeeDrop support folder transfer?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. Entire directories and nested subfolders are preserved with complete folder structure during transfer.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Can I transfer multiple files?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. BeeDrop supports multi-file selection and batch transfers, allowing you to send hundreds of files seamlessly in one click.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                <a href="#" class="logo" style="justify-content: center; margin-bottom: 8px;">
+                    <img src="assets/logo.webp" alt="BeeDrop Logo" class="brand-logo-img" width="30" height="30">
+                    <span>BeeDrop</span>
+                </a>
+                <div class="footer-brand">Built by <strong>Sarkar Labs / MS Technologies</strong> • Founded by <strong>Madhu Sarkar</strong></div>
+                <div class="footer-links">
+                    <a href="#download">Download</a>
+                    <a href="#why-beedrop">Features</a>
+                    <a href="#how-it-works">Documentation</a>
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-of-service.html">Terms of Service</a>
+                    <a href="mailto:madhusudans698@gmail.com">Contact</a>
+                </div>
+                <div class="footer-brand" style="margin-top: 14px; font-size: 0.85rem; opacity: 0.75;">
+                    Grievance Officer: Madhusudan Sarkar •
+                    <a href="mailto:madhusudans698@gmail.com" style="text-decoration: underline; color: var(--primary);">madhusudans698@gmail.com</a>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         Third-Party Scripts & Monetization (Google AdSense / Analytics)
+         Paste external tags here to keep core site logic clean and isolated.
+         ========================================================================== -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+    <!-- External Modular Script -->
+    <script src="js/script.js" defer></script>
+</body>
+
+</html>
