@@ -19,12 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let lenis;
     if (typeof Lenis !== "undefined" && !prefersReducedMotion) {
         lenis = new Lenis({
-            duration: 1.1,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
-            smoothTouch: false,
+            lerp: 0.08, // Physics-based normal smooth scroll (120fps optimized)
+            wheelMultiplier: 1,
+            touchMultiplier: 2,
+            normalizeWheel: true
         });
 
         // Sync Lenis with GSAP ScrollTrigger
@@ -264,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (targetEl) {
                     e.preventDefault();
                     if (lenis) {
-                        lenis.scrollTo(targetEl, { offset: -30, duration: 1.1 });
+                        lenis.scrollTo(targetEl, { offset: -30, lerp: 0.1 });
                     } else {
                         const y = targetEl.getBoundingClientRect().top + window.pageYOffset - 30;
                         window.scrollTo({ top: y, behavior: 'smooth' });
@@ -431,8 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
         beeGroup.position.y += 1.5;
         scene.add(beeGroup);
 
-        // 5. Optimized Net Background (Reduced from 80 to 45 particles for smooth 60fps)
-        const netParticlesCount = 45;
+        // 5. Optimized Net Background (Balanced particles for smooth fps and visuals)
+        const netParticlesCount = 80;
         const netPositions = new Float32Array(netParticlesCount * 3);
         const netVelocities = [];
 
@@ -451,11 +449,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const netGeom = new THREE.BufferGeometry();
         netGeom.setAttribute('position', new THREE.BufferAttribute(netPositions, 3));
         
+        const createCircleTexture = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.arc(16, 16, 14, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            return new THREE.CanvasTexture(canvas);
+        };
+
         const netMat = new THREE.PointsMaterial({
             size: 0.15,
             color: 0xed9f18,
             transparent: true,
-            opacity: 0.8
+            opacity: 0.8,
+            map: createCircleTexture(),
+            alphaTest: 0.1,
+            depthWrite: false
         });
         const netPoints = new THREE.Points(netGeom, netMat);
         scene.add(netPoints);
@@ -628,9 +641,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Prioritize critical rendering before initializing Three.js WebGL canvas
-    if (window.requestIdleCallback) {
-        requestIdleCallback(() => initThreeBackground(), { timeout: 1000 });
+    const startThreeJS = () => {
+        if (prefersReducedMotion) return;
+        const threeScript = document.createElement('script');
+        threeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        threeScript.onload = () => {
+            if (window.requestIdleCallback) {
+                requestIdleCallback(() => initThreeBackground(), { timeout: 500 });
+            } else {
+                setTimeout(initThreeBackground, 250);
+            }
+        };
+        document.body.appendChild(threeScript);
+    };
+
+    if (document.readyState === 'complete') {
+        startThreeJS();
     } else {
-        setTimeout(initThreeBackground, 150);
+        window.addEventListener('load', startThreeJS);
     }
 });
