@@ -19,10 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let lenis;
     if (typeof Lenis !== "undefined" && !prefersReducedMotion) {
         lenis = new Lenis({
-            lerp: 0.08, // Physics-based normal smooth scroll (120fps optimized)
-            wheelMultiplier: 1,
-            touchMultiplier: 2,
-            normalizeWheel: true
+            lerp: 0.1, // Snappier scrolling, less floaty/laggy feel
+            smoothWheel: true,
+            smoothTouch: false, // Disable on touch to fix lag on mobile displays
+            wheelMultiplier: 1
         });
 
         // Sync Lenis with GSAP ScrollTrigger
